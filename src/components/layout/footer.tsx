@@ -1,17 +1,16 @@
 import Link from "next/link";
-import { Separator } from "@/components/ui/separator";
 
 export function Footer() {
   return (
-    <footer className="border-t border-border bg-card">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+    <footer className="border-t border-border bg-revolut-dark">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
           <div>
             <Link href="/" className="text-2xl font-serif font-bold text-gold-gradient">
               YULMIA
             </Link>
-            <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
+            <p className="mt-4 text-sm text-muted-foreground leading-relaxed tracking-wide">
               South Florida investment properties for Canadian and international
               investors. Houses, multifamily, and distressed properties with
               AI-powered analysis.
@@ -20,10 +19,10 @@ export function Footer() {
 
           {/* Properties */}
           <div>
-            <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">
+            <h4 className="text-sm font-medium text-foreground uppercase tracking-widest">
               Properties
-            </h3>
-            <ul className="mt-4 space-y-2">
+            </h4>
+            <ul className="mt-4 space-y-3">
               {[
                 { href: "/search?type=single-family", label: "Single Family Homes" },
                 { href: "/search?type=multifamily", label: "Multifamily (2-4 Units)" },
@@ -34,7 +33,7 @@ export function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                    className="text-sm text-muted-foreground hover:text-primary transition-colors tracking-wide"
                   >
                     {link.label}
                   </Link>
@@ -45,10 +44,10 @@ export function Footer() {
 
           {/* Areas */}
           <div>
-            <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">
+            <h4 className="text-sm font-medium text-foreground uppercase tracking-widest">
               Areas
-            </h3>
-            <ul className="mt-4 space-y-2">
+            </h4>
+            <ul className="mt-4 space-y-3">
               {[
                 { href: "/neighborhoods/miami", label: "Miami" },
                 { href: "/neighborhoods/fort-lauderdale", label: "Fort Lauderdale" },
@@ -59,7 +58,7 @@ export function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                    className="text-sm text-muted-foreground hover:text-primary transition-colors tracking-wide"
                   >
                     {link.label}
                   </Link>
@@ -70,10 +69,10 @@ export function Footer() {
 
           {/* Services */}
           <div>
-            <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">
+            <h4 className="text-sm font-medium text-foreground uppercase tracking-widest">
               Services
-            </h3>
-            <ul className="mt-4 space-y-2">
+            </h4>
+            <ul className="mt-4 space-y-3">
               {[
                 { href: "/invest", label: "E2 Visa Pathway" },
                 { href: "/invest#relocation", label: "Business Relocation" },
@@ -84,7 +83,7 @@ export function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                    className="text-sm text-muted-foreground hover:text-primary transition-colors tracking-wide"
                   >
                     {link.label}
                   </Link>
@@ -94,20 +93,20 @@ export function Footer() {
           </div>
         </div>
 
-        <Separator className="my-8 bg-border" />
-
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-muted-foreground">
-            &copy; {new Date().getFullYear()} YULMIA. All rights reserved.
-          </p>
-          <div className="flex items-center gap-4 text-xs text-muted-foreground">
-            <Link href="/privacy" className="hover:text-primary transition-colors">
-              Privacy
-            </Link>
-            <Link href="/terms" className="hover:text-primary transition-colors">
-              Terms
-            </Link>
-            <span>Montreal &bull; Miami &bull; South Florida</span>
+        <div className="mt-12 pt-8 border-t border-border">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-muted-foreground tracking-wide">
+              &copy; {new Date().getFullYear()} YULMIA. All rights reserved.
+            </p>
+            <div className="flex items-center gap-4 text-xs text-muted-foreground tracking-wide">
+              <Link href="/privacy" className="hover:text-primary transition-colors">
+                Privacy
+              </Link>
+              <Link href="/terms" className="hover:text-primary transition-colors">
+                Terms
+              </Link>
+              <span>Montreal &bull; Miami &bull; South Florida</span>
+            </div>
           </div>
         </div>
       </div>

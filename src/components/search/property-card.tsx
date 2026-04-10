@@ -30,7 +30,7 @@ interface PropertyCardProps {
 }
 
 const verdictConfig = {
-  STRONG: { label: "Strong", className: "bg-success/10 text-success border-success/20" },
+  STRONG: { label: "Strong", className: "bg-teal/10 text-teal border-teal/20" },
   MODERATE: { label: "Moderate", className: "bg-warning/10 text-warning border-warning/20" },
   CAUTIOUS: { label: "Cautious", className: "bg-destructive/10 text-destructive border-destructive/20" },
 };
@@ -92,7 +92,7 @@ export function PropertyCard({
       onMouseEnter={startCarousel}
       onMouseLeave={stopCarousel}
     >
-      <div className="rounded-xl border border-border bg-card overflow-hidden transition-all duration-300 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5">
+      <div className="rounded-[--radius-xl] border border-border bg-card overflow-hidden transition-all duration-300 hover:border-primary/40">
         {/* Image with Carousel */}
         <div className="relative aspect-[4/3] overflow-hidden">
           {hasPhotos ? (

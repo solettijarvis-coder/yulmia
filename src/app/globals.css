@@ -4,37 +4,47 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --color-background: #0A0A0A;
-  --color-foreground: #F5F5F0;
-  --color-card: #141414;
-  --color-card-foreground: #F5F5F0;
-  --color-popover: #1A1A1A;
-  --color-popover-foreground: #F5F5F0;
+  /* Revolut-inspired dark palette — adapted for YULMIA gold luxury */
+  --color-background: #0C0D0F;
+  --color-foreground: #F4F4F4;
+  --color-card: #15171A;
+  --color-card-foreground: #F4F4F4;
+  --color-popover: #1A1C1F;
+  --color-popover-foreground: #F4F4F4;
   --color-primary: #C8A960;
-  --color-primary-foreground: #0A0A0A;
-  --color-secondary: #1E1E1E;
-  --color-secondary-foreground: #F5F5F0;
-  --color-muted: #1A1A1A;
-  --color-muted-foreground: #888888;
+  --color-primary-foreground: #0C0D0F;
+  --color-secondary: #1E2124;
+  --color-secondary-foreground: #F4F4F4;
+  --color-muted: #1A1C1F;
+  --color-muted-foreground: #8D969E;
   --color-accent: #C8A960;
-  --color-accent-foreground: #0A0A0A;
-  --color-destructive: #EF4444;
-  --color-destructive-foreground: #F5F5F0;
-  --color-border: #2A2A2A;
-  --color-input: #2A2A2A;
+  --color-accent-foreground: #0C0D0F;
+  --color-destructive: #E23B4A;
+  --color-destructive-foreground: #F4F4F4;
+  --color-border: #2A2D31;
+  --color-input: #2A2D31;
   --color-ring: #C8A960;
-  --color-success: #22C55E;
-  --color-warning: #F59E0B;
-  --color-info: #3B82F6;
 
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  /* Revolut semantic tokens adapted for real estate */
+  --color-success: #00A87E;
+  --color-warning: #EC7E00;
+  --color-info: #494FDF;
+  --color-teal: #00A87E;
+  --color-revolut-dark: #191C1F;
+  --color-gold: #C8A960;
+  --color-gold-light: #E8D5A0;
+  --color-gold-dark: #A68B3C;
+
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-serif: "Playfair Display", ui-serif, Georgia, serif;
-  --font-mono: ui-monospace, SFMono-Regular, monospace;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
-  --radius-sm: 0.25rem;
-  --radius-md: 0.375rem;
-  --radius-lg: 0.5rem;
-  --radius-xl: 0.75rem;
+  /* Revolut radius system */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1.25rem;
+  --radius-xl: 1.5rem;
+  --radius-pill: 9999px;
 }
 
 @layer base {
@@ -45,28 +55,35 @@
     @apply bg-background text-foreground font-sans;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    letter-spacing: 0.01em;
   }
-  h1, h2, h3, h4, h5, h6 {
+  /* Serif headings for luxury feel, with tight tracking on large sizes */
+  h1, h2, h3 {
     @apply font-serif;
+    letter-spacing: -0.02em;
+  }
+  h4, h5, h6 {
+    @apply font-sans font-medium;
+    letter-spacing: 0.02em;
   }
 }
 
-/* Custom scrollbar for dark theme */
+/* Revolut-style scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0A0A0A;
+  background: #0C0D0F;
 }
 ::-webkit-scrollbar-thumb {
-  background: #2A2A2A;
-  border-radius: 4px;
+  background: #2A2D31;
+  border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #3A3A3A;
+  background: #3A3D41;
 }
 
-/* Gold gradient text */
+/* Gold gradient text — Revolut-style gradient accent */
 .text-gold-gradient {
   background: linear-gradient(135deg, #C8A960 0%, #E8D5A0 50%, #C8A960 100%);
   -webkit-background-clip: text;
@@ -74,20 +91,23 @@
   background-clip: text;
 }
 
-/* Investment metric cards */
+/* Investment metric colors — Revolut semantic tokens */
 .metric-positive {
-  @apply text-success;
+  color: var(--color-teal);
 }
 .metric-negative {
-  @apply text-destructive;
+  color: var(--color-destructive);
 }
 .metric-neutral {
-  @apply text-muted-foreground;
+  color: var(--color-muted-foreground);
 }
 
-/* Property card hover */
+/* Property card — flat Revolut style, no shadows */
 .property-card {
-  @apply transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5;
+  transition: all 0.3s ease;
+}
+.property-card:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 40%, transparent);
 }
 
 /* Map container */
@@ -95,4 +115,85 @@
   width: 100%;
   height: 100%;
   min-height: 400px;
+}
+
+/* Revolut pill button utility */
+.btn-pill {
+  border-radius: var(--radius-pill);
+  padding: 0.875rem 2rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  letter-spacing: 0.02em;
+  transition: all 0.15s ease;
+}
+.btn-pill-primary {
+  border-radius: var(--radius-pill);
+  padding: 0.875rem 2rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  letter-spacing: 0.02em;
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+  transition: all 0.15s ease;
+}
+.btn-pill-primary:hover {
+  opacity: 0.85;
+}
+.btn-pill-outline {
+  border-radius: var(--radius-pill);
+  padding: 0.875rem 2rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  letter-spacing: 0.02em;
+  background: transparent;
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary);
+  transition: all 0.15s ease;
+}
+.btn-pill-outline:hover {
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+.btn-pill-ghost-dark {
+  border-radius: var(--radius-pill);
+  padding: 0.875rem 2rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  letter-spacing: 0.02em;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.15s ease;
+}
+.btn-pill-ghost-dark:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+.btn-pill-light {
+  border-radius: var(--radius-pill);
+  padding: 0.875rem 2rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  letter-spacing: 0.02em;
+  background: #F4F4F4;
+  color: #191C1F;
+  transition: all 0.15s ease;
+}
+.btn-pill-light:hover {
+  opacity: 0.85;
+}
+
+/* Revolut-style section spacing */
+.section-revolut {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+
+/* Gold accent underline for links */
+.link-gold {
+  color: var(--color-primary);
+  transition: color 0.15s ease;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.link-gold:hover {
+  color: var(--color-gold-light);
 }

@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Search, TrendingUp, ShieldCheck, MapPin, ChevronDown } from "lucide-react";
+import { Search, TrendingUp, ShieldCheck, MapPin, ChevronDown, ArrowRight } from "lucide-react";
 
 const propertyTypes = [
   { value: "", label: "All Types" },
@@ -49,10 +49,10 @@ export function Hero() {
 
   return (
     <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
-      {/* Background */}
+      {/* Background — Revolut flat style */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background">
         <div
-          className="absolute inset-0 opacity-20 bg-cover bg-center bg-no-repeat"
+          className="absolute inset-0 opacity-15 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage:
               "url('https://images.unsplash.com/photo-1533106497176-45ae19e68ba2?w=1920&q=80')",
@@ -63,98 +63,98 @@ export function Hero() {
 
       {/* Content */}
       <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center">
-        <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-4 py-1.5 text-sm text-primary mb-8">
+        {/* Revolut-style pill badge */}
+        <div className="inline-flex items-center gap-2 rounded-[--radius-pill] border border-primary/30 bg-primary/5 px-5 py-2 text-sm text-primary mb-8 tracking-wide">
           <MapPin className="h-3.5 w-3.5" />
           Montreal to Miami — Investment Properties for Canadians
         </div>
 
-        <h1 className="text-4xl sm:text-5xl lg:text-7xl font-serif font-bold tracking-tight text-foreground leading-tight">
+        {/* Display headline — Revolut tight tracking on serif */}
+        <h1 className="text-5xl sm:text-6xl lg:text-8xl font-serif font-bold tracking-tight text-foreground leading-none">
           South Florida{" "}
           <span className="text-gold-gradient">Investment</span>
           <br />
           Properties
         </h1>
 
-        <p className="mt-6 text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+        <p className="mt-8 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed tracking-wide">
           Houses, multifamily, and distressed properties with AI-powered
           investment analysis. Built for investors, not condo buyers.
         </p>
 
-        {/* Integrated Search Bar with Filters */}
-        <div className="mt-10 max-w-3xl mx-auto">
-          <div className="rounded-2xl border border-border bg-card/95 backdrop-blur-sm p-4 sm:p-5 shadow-xl shadow-black/20">
+        {/* Revolut-style CTA row */}
+        <div className="mt-8 flex items-center justify-center gap-3">
+          <Button
+            onClick={handleSearch}
+            size="lg"
+            className="font-semibold"
+          >
+            Explore Properties
+            <ArrowRight className="ml-1.5 h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={() => router.push("/e2-visa")}
+            className="font-semibold"
+          >
+            E-2 Visa Guide
+          </Button>
+        </div>
+
+        {/* Integrated Search Bar — flat Revolut card */}
+        <div className="mt-12 max-w-3xl mx-auto">
+          <div className="rounded-[--radius-xl] border border-border bg-card/95 backdrop-blur-sm p-5 sm:p-6">
             {/* Main search row */}
             <div className="flex items-center gap-2">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <input
                   type="text"
                   placeholder="Search by city, address, or ZIP..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                  className="w-full h-12 rounded-lg border border-border bg-background pl-11 pr-4 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-sm"
+                  className="w-full h-12 rounded-[--radius-md] border border-border bg-background pl-12 pr-4 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-sm tracking-wide"
                 />
               </div>
               <Button
                 onClick={handleSearch}
                 size="lg"
-                className="h-12 px-6 bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg font-semibold shrink-0"
+                className="h-12 shrink-0 font-semibold"
               >
                 <Search className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Search</span>
               </Button>
             </div>
 
-            {/* Filter dropdowns */}
+            {/* Filter dropdowns — Revolut pill-style selects */}
             <div className="mt-3 grid grid-cols-3 gap-2">
-              <div className="relative">
-                <select
-                  value={propertyType}
-                  onChange={(e) => setPropertyType(e.target.value)}
-                  className="w-full h-10 rounded-lg border border-border bg-background px-3 pr-8 text-sm text-foreground appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
-                >
-                  {propertyTypes.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-              </div>
-              <div className="relative">
-                <select
-                  value={priceRange}
-                  onChange={(e) => setPriceRange(e.target.value)}
-                  className="w-full h-10 rounded-lg border border-border bg-background px-3 pr-8 text-sm text-foreground appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
-                >
-                  {priceRanges.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-              </div>
-              <div className="relative">
-                <select
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                  className="w-full h-10 rounded-lg border border-border bg-background px-3 pr-8 text-sm text-foreground appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
-                >
-                  {cities.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-              </div>
+              {[
+                { value: propertyType, setter: setPropertyType, options: propertyTypes },
+                { value: priceRange, setter: setPriceRange, options: priceRanges },
+                { value: city, setter: setCity, options: cities },
+              ].map(({ value, setter, options }, i) => (
+                <div key={i} className="relative">
+                  <select
+                    value={value}
+                    onChange={(e) => setter(e.target.value)}
+                    className="w-full h-10 rounded-[--radius-md] border border-border bg-background px-3 pr-8 text-sm text-foreground appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary tracking-wide"
+                  >
+                    {options.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* Quick links */}
-          <div className="mt-3 flex items-center justify-center gap-3 text-xs text-muted-foreground">
+          {/* Quick links — Revolut pill chips */}
+          <div className="mt-4 flex items-center justify-center gap-3 text-xs text-muted-foreground">
             <span>Popular:</span>
             {["Miami multifamily", "West Palm Beach under $300K", "E-2 eligible properties"].map((term) => (
               <button
@@ -163,7 +163,7 @@ export function Hero() {
                   setSearchQuery(term);
                   router.push(`/search?q=${encodeURIComponent(term)}`);
                 }}
-                className="px-2.5 py-1 rounded-full border border-border hover:border-primary/50 hover:text-primary transition-colors"
+                className="px-3 py-1.5 rounded-[--radius-pill] border border-border hover:border-primary/50 hover:text-primary transition-colors tracking-wide"
               >
                 {term}
               </button>
@@ -171,45 +171,33 @@ export function Hero() {
           </div>
         </div>
 
-        {/* Quick Stats */}
-        <div className="mt-12 grid grid-cols-3 gap-4 sm:gap-8 max-w-lg mx-auto">
-          <div className="text-center">
-            <div className="text-2xl sm:text-3xl font-serif font-bold text-primary">5,826</div>
-            <div className="text-xs sm:text-sm text-muted-foreground mt-1">
-              Investment Properties
+        {/* Quick Stats — Revolut flat cards */}
+        <div className="mt-16 grid grid-cols-3 gap-3 sm:gap-6 max-w-md mx-auto">
+          {[
+            { value: "5,826", label: "Investment Properties" },
+            { value: "6.8%", label: "Avg Cap Rate" },
+            { value: "AI", label: "Investment Insights", icon: TrendingUp },
+          ].map((stat) => (
+            <div key={stat.label} className="text-center">
+              <div className="text-2xl sm:text-3xl font-serif font-bold text-primary tracking-tight">
+                {stat.value}
+                {stat.icon && <stat.icon className="inline h-5 w-5 ml-1" />}
+              </div>
+              <div className="text-xs sm:text-sm text-muted-foreground mt-1 tracking-wide">
+                {stat.label}
+              </div>
             </div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl sm:text-3xl font-serif font-bold text-primary">6.8%</div>
-            <div className="text-xs sm:text-sm text-muted-foreground mt-1">
-              Avg Cap Rate
-            </div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl sm:text-3xl font-serif font-bold text-primary flex items-center justify-center gap-1">
-              <TrendingUp className="h-5 w-5" />
-              AI
-            </div>
-            <div className="text-xs sm:text-sm text-muted-foreground mt-1">
-              Investment Insights
-            </div>
-          </div>
+          ))}
         </div>
 
-        {/* Trust badges */}
-        <div className="mt-8 flex items-center justify-center gap-6 text-xs text-muted-foreground">
-          <span className="flex items-center gap-1.5">
-            <ShieldCheck className="h-4 w-4 text-primary" />
-            No Condos
-          </span>
-          <span className="flex items-center gap-1.5">
-            <ShieldCheck className="h-4 w-4 text-primary" />
-            Investor Data
-          </span>
-          <span className="flex items-center gap-1.5">
-            <ShieldCheck className="h-4 w-4 text-primary" />
-            E2 Visa Guidance
-          </span>
+        {/* Trust badges — Revolut pill chips */}
+        <div className="mt-10 flex items-center justify-center gap-4 text-xs text-muted-foreground">
+          {["No Condos", "Investor Data", "E2 Visa Guidance"].map((badge) => (
+            <span key={badge} className="flex items-center gap-1.5 px-3 py-1.5 rounded-[--radius-pill] border border-border tracking-wide">
+              <ShieldCheck className="h-3.5 w-3.5 text-primary" />
+              {badge}
+            </span>
+          ))}
         </div>
       </div>
     </section>
