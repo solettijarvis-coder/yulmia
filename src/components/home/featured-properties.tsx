@@ -14,6 +14,7 @@ interface FeaturedProperty {
   sqft: number;
   propertyType: string;
   photo: string | null;
+  photos?: string[];
   capRate: number;
   cashFlow: number;
   cocReturn: number;
@@ -85,7 +86,7 @@ export async function FeaturedProperties() {
                   <div className="relative aspect-[4/3] overflow-hidden">
                     <div
                       className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105 bg-gray-800"
-                      style={property.photo ? { backgroundImage: `url(${property.photo})` } : undefined}
+                      style={(property.photos?.[0] || property.photo) ? { backgroundImage: `url(${property.photos?.[0] || property.photo})` } : undefined}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 

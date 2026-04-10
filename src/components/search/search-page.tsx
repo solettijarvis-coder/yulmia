@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { Search, SlidersHorizontal, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { SlidersHorizontal, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Slider } from "@/components/ui/slider";
 import { propertyTypeLabels } from "@/lib/utils";
+import { SearchAutofill } from "./search-autofill";
 import type { PropertyType, InvestmentVerdict } from "@/types/property";
 import { PropertyCard } from "./property-card";
 
@@ -27,6 +29,7 @@ interface SearchProperty {
   rent: number;
   verdict: InvestmentVerdict;
   e2Eligible: boolean;
+  onePercentRule: boolean;
   daysOnMarket: number;
   yearBuilt: number | null;
   hoaFee: number;
@@ -46,6 +49,23 @@ const sortOptions = [
 
 type SortBy = (typeof sortOptions)[number]["value"];
 
+const cashFlowOptions = [
+  { value: "any", label: "Any" },
+  { value: "positive", label: "Positive" },
+  { value: "500", label: "$500+/mo" },
+  { value: "1000", label: "$1,000+/mo" },
+  { value: "2000", label: "$2,000+/mo" },
+] as const;
+
+const bedsOptions = [
+  { value: "any", label: "Any" },
+  { value: "1", label: "1+" },
+  { value: "2", label: "2+" },
+  { value: "3", label: "3+" },
+  { value: "4", label: "4+" },
+  { value: "5", label: "5+" },
+] as const;
+
 export function SearchPage() {
   const [allProperties, setAllProperties] = useState<SearchProperty[]>([]);
   const [loading, setLoading] = useState(true);
@@ -54,8 +74,11 @@ export function SearchPage() {
   const [selectedTypes, setSelectedTypes] = useState<PropertyType[]>([]);
   const [priceMin, setPriceMin] = useState("");
   const [priceMax, setPriceMax] = useState("");
-  const [capRateMin, setCapRateMin] = useState("");
-  const [bedsMin, setBedsMin] = useState("");
+  const [capRateSlider, setCapRateSlider] = useState(0);
+  const [bedsMin, setBedsMin] = useState("any");
+  const [cashFlowMin, setCashFlowMin] = useState("any");
+  const [e2Only, setE2Only] = useState(false);
+  const [onePercentOnly, setOnePercentOnly] = useState(false);
   const [sortBy, setSortBy] = useState<SortBy>("cap_rate");
   const [page, setPage] = useState(1);
   const [selectedCities, setSelectedCities] = useState<string[]>([]);
@@ -64,10 +87,10 @@ export function SearchPage() {
   useEffect(() => {
     fetch("/data/search.json")
       .then((r) => r.json())
-      .then((raw: Omit<SearchProperty, "photos">[]) => {
+      .then((raw: any[]) => {
         const data: SearchProperty[] = raw.map((p) => ({
           ...p,
-          photos: p.photo ? [p.photo] : [],
+          photos: (p.photos && p.photos.length > 0) ? p.photos : (p.photo ? [p.photo] : []),
         }));
         setAllProperties(data);
         setLoading(false);
@@ -116,16 +139,35 @@ export function SearchPage() {
       if (max > 0) results = results.filter((p) => p.price <= max);
     }
 
-    // Cap rate
-    if (capRateMin) {
-      const min = parseFloat(capRateMin);
-      if (min > 0) results = results.filter((p) => p.capRate >= min);
+    // Cap rate slider
+    if (capRateSlider > 0) {
+      results = results.filter((p) => p.capRate >= capRateSlider);
     }
 
     // Beds
-    if (bedsMin) {
+    if (bedsMin !== "any") {
       const min = parseInt(bedsMin);
       if (min > 0) results = results.filter((p) => p.beds >= min);
+    }
+
+    // Cash flow
+    if (cashFlowMin !== "any") {
+      if (cashFlowMin === "positive") {
+        results = results.filter((p) => p.cashFlow > 0);
+      } else {
+        const min = parseInt(cashFlowMin);
+        if (min > 0) results = results.filter((p) => p.cashFlow >= min);
+      }
+    }
+
+    // E-2 eligible
+    if (e2Only) {
+      results = results.filter((p) => p.e2Eligible);
+    }
+
+    // 1% Rule
+    if (onePercentOnly) {
+      results = results.filter((p) => p.onePercentRule);
     }
 
     // Sort
@@ -151,7 +193,7 @@ export function SearchPage() {
     }
 
     return results;
-  }, [allProperties, searchQuery, selectedTypes, selectedCities, priceMin, priceMax, capRateMin, bedsMin, sortBy]);
+  }, [allProperties, searchQuery, selectedTypes, selectedCities, priceMin, priceMax, capRateSlider, bedsMin, cashFlowMin, e2Only, onePercentOnly, sortBy]);
 
   // Pagination
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
@@ -163,7 +205,7 @@ export function SearchPage() {
   // Reset page on filter change
   useEffect(() => {
     setPage(1);
-  }, [searchQuery, selectedTypes, selectedCities, priceMin, priceMax, capRateMin, bedsMin, sortBy]);
+  }, [searchQuery, selectedTypes, selectedCities, priceMin, priceMax, capRateSlider, bedsMin, cashFlowMin, e2Only, onePercentOnly, sortBy]);
 
   const toggleType = useCallback((type: PropertyType) => {
     setSelectedTypes((prev) =>
@@ -183,11 +225,14 @@ export function SearchPage() {
     setSelectedCities([]);
     setPriceMin("");
     setPriceMax("");
-    setCapRateMin("");
-    setBedsMin("");
+    setCapRateSlider(0);
+    setBedsMin("any");
+    setCashFlowMin("any");
+    setE2Only(false);
+    setOnePercentOnly(false);
   }, []);
 
-  const hasActiveFilters = searchQuery || selectedTypes.length > 0 || selectedCities.length > 0 || priceMin || priceMax || capRateMin || bedsMin;
+  const hasActiveFilters = searchQuery || selectedTypes.length > 0 || selectedCities.length > 0 || priceMin || priceMax || capRateSlider > 0 || bedsMin !== "any" || cashFlowMin !== "any" || e2Only || onePercentOnly;
 
   if (loading) {
     return (
@@ -214,16 +259,12 @@ export function SearchPage() {
 
           {/* Search Bar */}
           <div className="mt-4 flex items-center gap-3">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-              <Input
-                type="text"
-                placeholder="Search by city, address, or ZIP..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-12 pl-10 bg-background border-border"
-              />
-            </div>
+            <SearchAutofill
+              value={searchQuery}
+              onChange={setSearchQuery}
+              onSearch={setSearchQuery}
+              placeholder="Search by city, address, or ZIP..."
+            />
             <Button
               variant="outline"
               size="lg"
@@ -235,10 +276,54 @@ export function SearchPage() {
             </Button>
           </div>
 
+          {/* Investor Toggle Pills */}
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <button
+              className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
+                e2Only
+                  ? "border-[#C8A960] bg-[#C8A960]/15 text-[#C8A960]"
+                  : "border-border text-muted-foreground hover:border-[#C8A960]/50"
+              }`}
+              onClick={() => setE2Only(!e2Only)}
+            >
+              E-2 Eligible
+            </button>
+            <button
+              className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
+                onePercentOnly
+                  ? "border-[#C8A960] bg-[#C8A960]/15 text-[#C8A960]"
+                  : "border-border text-muted-foreground hover:border-[#C8A960]/50"
+              }`}
+              onClick={() => setOnePercentOnly(!onePercentOnly)}
+            >
+              1% Rule
+            </button>
+          </div>
+
           {/* Active Filters */}
           {hasActiveFilters && (
             <div className="mt-3 flex flex-wrap items-center gap-2">
               <span className="text-xs text-muted-foreground">Active:</span>
+              {e2Only && (
+                <Badge
+                  variant="secondary"
+                  className="gap-1 cursor-pointer hover:bg-destructive/10 hover:text-destructive"
+                  onClick={() => setE2Only(false)}
+                >
+                  E-2 Eligible
+                  <X className="h-3 w-3" />
+                </Badge>
+              )}
+              {onePercentOnly && (
+                <Badge
+                  variant="secondary"
+                  className="gap-1 cursor-pointer hover:bg-destructive/10 hover:text-destructive"
+                  onClick={() => setOnePercentOnly(false)}
+                >
+                  1% Rule
+                  <X className="h-3 w-3" />
+                </Badge>
+              )}
               {selectedTypes.map((type) => (
                 <Badge
                   key={type}
@@ -271,9 +356,29 @@ export function SearchPage() {
                   Max: ${parseInt(priceMax.replace(/[^0-9]/g, "")).toLocaleString()}
                 </Badge>
               )}
-              {capRateMin && (
+              {capRateSlider > 0 && (
                 <Badge variant="secondary" className="gap-1">
-                  Cap ≥ {capRateMin}%
+                  Cap ≥ {capRateSlider.toFixed(1)}%
+                </Badge>
+              )}
+              {bedsMin !== "any" && (
+                <Badge
+                  variant="secondary"
+                  className="gap-1 cursor-pointer hover:bg-destructive/10 hover:text-destructive"
+                  onClick={() => setBedsMin("any")}
+                >
+                  {bedsMin}+ Beds
+                  <X className="h-3 w-3" />
+                </Badge>
+              )}
+              {cashFlowMin !== "any" && (
+                <Badge
+                  variant="secondary"
+                  className="gap-1 cursor-pointer hover:bg-destructive/10 hover:text-destructive"
+                  onClick={() => setCashFlowMin("any")}
+                >
+                  {cashFlowMin === "positive" ? "Positive Cash Flow" : `$${cashFlowMin}+/mo Cash Flow`}
+                  <X className="h-3 w-3" />
                 </Badge>
               )}
               <button
@@ -289,8 +394,9 @@ export function SearchPage() {
         {/* Filter Panel */}
         {showFilters && (
           <div className="border-t border-border bg-card">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4">
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 space-y-5">
+              {/* Row 1: Property Type + City */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Property Type
@@ -331,22 +437,79 @@ export function SearchPage() {
                     ))}
                   </div>
                 </div>
+              </div>
+
+              {/* Row 2: Investor filters */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                {/* Price range */}
                 <div>
                   <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                    Price / Cap Rate
+                    Price Range
                   </label>
                   <div className="mt-2 space-y-2">
                     <Input placeholder="Min price" value={priceMin} onChange={(e) => setPriceMin(e.target.value)} className="h-9 text-sm" />
                     <Input placeholder="Max price" value={priceMax} onChange={(e) => setPriceMax(e.target.value)} className="h-9 text-sm" />
-                    <Input placeholder="Min cap rate %" value={capRateMin} onChange={(e) => setCapRateMin(e.target.value)} className="h-9 text-sm" />
                   </div>
                 </div>
+
+                {/* Cap Rate slider */}
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    {capRateSlider > 0
+                      ? `Min ${capRateSlider.toFixed(1)}% cap rate`
+                      : "Cap Rate"}
+                  </label>
+                  <div className="mt-2 px-1">
+                    <Slider
+                      value={[capRateSlider]}
+                      onValueChange={(v) => setCapRateSlider(Array.isArray(v) ? v[0] : v)}
+                      min={0}
+                      max={30}
+                      step={0.5}
+                    />
+                    <div className="mt-1 flex justify-between text-[10px] text-muted-foreground">
+                      <span>0%</span>
+                      <span>15%</span>
+                      <span>30%</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Cash Flow dropdown */}
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    Cash Flow
+                  </label>
+                  <select
+                    value={cashFlowMin}
+                    onChange={(e) => setCashFlowMin(e.target.value)}
+                    className="mt-2 w-full h-9 rounded-md border border-border bg-background px-3 text-sm text-foreground"
+                  >
+                    {cashFlowOptions.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Beds dropdown */}
                 <div>
                   <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Beds / Sort
                   </label>
                   <div className="mt-2 space-y-2">
-                    <Input placeholder="Min beds" value={bedsMin} onChange={(e) => setBedsMin(e.target.value)} className="h-9 text-sm" />
+                    <select
+                      value={bedsMin}
+                      onChange={(e) => setBedsMin(e.target.value)}
+                      className="w-full h-9 rounded-md border border-border bg-background px-3 text-sm text-foreground"
+                    >
+                      {bedsOptions.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
                     <select
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value as SortBy)}
