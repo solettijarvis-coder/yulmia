@@ -565,26 +565,7 @@ export function SearchPage() {
               {paginated.map((property) => (
                 <PropertyCard
                   key={property.id}
-                  id={property.id}
-                  slug={property.slug}
-                  address={property.address}
-                  city={property.city}
-                  zip={property.zip}
-                  price={property.price}
-                  beds={property.beds}
-                  baths={property.baths}
-                  sqft={property.sqft}
-                  propertyType={property.propertyType}
-                  photos={property.photos}
-                  capRate={property.capRate}
-                  cashFlow={property.cashFlow}
-                  cocReturn={property.cocReturn}
-                  rent={property.rent}
-                  verdict={property.verdict}
-                  e2Eligible={property.e2Eligible}
-                  daysOnMarket={property.daysOnMarket}
-                  yearBuilt={property.yearBuilt}
-                  hoaFee={property.hoaFee}
+                  property={property}
                 />
               ))}
             </div>

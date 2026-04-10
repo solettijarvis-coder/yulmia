@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 interface MarketStatsData {
   totalProperties: number;
@@ -56,107 +57,83 @@ export async function MarketStats() {
 
   if (!stats) return null;
 
-  // Top 6 cities by cap rate (min 10 listings)
   const topCapRateAreas = neighborhoods
     .filter((n) => n.totalListings >= 10)
     .sort((a, b) => b.avgCapRate - a.avgCapRate)
-    .slice(0, 6);
-
-  const statCards = [
-    {
-      label: "Total Properties",
-      value: stats.totalProperties.toLocaleString(),
-      change: "Live MLS Data",
-      positive: true,
-    },
-    {
-      label: "Median Price",
-      value: formatPrice(stats.medianPrice),
-      change: "Single-family + Multi-family",
-      positive: true,
-    },
-    {
-      label: "Average Cap Rate",
-      value: `${stats.avgCapRate}%`,
-      change: `${stats.strongCount} STRONG deals`,
-      positive: stats.strongCount > 0,
-    },
-    {
-      label: "Average Rent",
-      value: `$${stats.avgRent.toLocaleString()}/mo`,
-      change: `${stats.e2Count} E-2 eligible`,
-      positive: true,
-    },
-  ];
+    .slice(0, 8);
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-card/50">
-      <div className="mx-auto max-w-7xl">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-serif font-bold text-foreground">
-            South Florida Market Data
-          </h2>
-          <p className="mt-3 text-muted-foreground">
-            Real investment metrics from {stats.totalProperties.toLocaleString()} properties across South Florida
-          </p>
+    <section className="py-24 px-6 lg:px-10">
+      <div className="mx-auto max-w-[1400px]">
+        {/* Section header */}
+        <div className="flex items-end justify-between mb-12">
+          <div>
+            <span className="text-[11px] font-medium tracking-[0.2em] uppercase text-gold">
+              Market Data
+            </span>
+            <h2 className="mt-2 text-3xl lg:text-4xl font-light tracking-[-0.03em] text-foreground">
+              South Florida at a glance
+            </h2>
+          </div>
+          <Link
+            href="/search"
+            className="hidden sm:flex items-center gap-1.5 text-[13px] text-muted-foreground hover:text-foreground transition-colors gold-underline"
+          >
+            View all properties
+            <ArrowRight className="h-3 w-3" />
+          </Link>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
-          {statCards.map((stat) => (
-            <div
-              key={stat.label}
-              className="p-5 rounded-xl border border-border bg-card"
-            >
-              <p className="text-xs text-muted-foreground uppercase tracking-wider">
+        {/* Stats grid — flat tiles, no cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-border mb-16">
+          {[
+            { label: "Properties", value: stats.totalProperties.toLocaleString(), sub: "Live MLS data" },
+            { label: "Median Price", value: formatPrice(stats.medianPrice), sub: "Single-family & multi-family" },
+            { label: "Avg Cap Rate", value: `${stats.avgCapRate}%`, sub: `${stats.strongCount} STRONG deals` },
+            { label: "Avg Rent", value: `$${stats.avgRent.toLocaleString()}/mo`, sub: `${stats.e2Count} E-2 eligible` },
+          ].map((stat) => (
+            <div key={stat.label} className="bg-card p-6 lg:p-8">
+              <div className="text-[11px] tracking-[0.12em] uppercase text-muted-foreground mb-3">
                 {stat.label}
-              </p>
-              <p className="mt-1 text-2xl sm:text-3xl font-serif font-bold text-foreground">
+              </div>
+              <div className="text-2xl lg:text-3xl font-light tracking-[-0.03em] text-foreground tabular-nums">
                 {stat.value}
-              </p>
-              <p className={`mt-1 text-xs font-medium ${stat.positive ? "text-success" : "text-destructive"}`}>
-                {stat.change}
-              </p>
+              </div>
+              <div className="text-[12px] text-muted-foreground/60 mt-2 tracking-[0.01em]">
+                {stat.sub}
+              </div>
             </div>
           ))}
         </div>
 
-        {/* Best Cap Rates Table */}
-        <div className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="px-5 py-4 border-b border-border flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">
+        {/* Top cap rate areas — editorial table */}
+        <div className="border-t border-border pt-10">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-sm font-medium tracking-[0.02em] text-foreground">
               Highest Cap Rate Areas
             </h3>
-            <Link href="/neighborhoods" className="text-xs text-primary hover:underline">
-              View all cities
+            <Link href="/neighborhoods" className="text-[12px] text-muted-foreground hover:text-foreground transition-colors gold-underline">
+              All cities
             </Link>
           </div>
-          <div className="divide-y divide-border">
-            {topCapRateAreas.map((area) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0">
+            {topCapRateAreas.map((area, i) => (
               <Link
                 key={area.id}
                 href={`/neighborhoods/${area.slug}`}
-                className="flex items-center justify-between px-5 py-3 hover:bg-muted/50 transition-colors"
+                className="group flex items-baseline justify-between py-3 px-1 border-b border-border/50 hover:bg-muted/30 transition-colors"
               >
-                <div className="flex items-center gap-3">
-                  <span className="font-medium text-foreground text-sm">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-[11px] text-muted-foreground/40 tabular-nums w-4">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className="text-sm text-foreground group-hover:text-gold transition-colors">
                     {area.name}
                   </span>
-                  <span className="text-xs text-primary font-semibold">
-                    {area.avgCapRate}% cap
-                  </span>
                 </div>
-                <div className="flex items-center gap-4">
-                  <span className="text-sm text-muted-foreground">
-                    Avg {formatPrice(area.avgPrice)}
-                  </span>
-                  <span className="text-xs text-muted-foreground">
-                    {area.totalListings} listings
-                  </span>
-                  <span className="text-xs text-success font-medium">
-                    {area.avgDaysOnMarket} DOM
-                  </span>
-                </div>
+                <span className="text-sm font-light tabular-nums text-gold">
+                  {area.avgCapRate}%
+                </span>
               </Link>
             ))}
           </div>

@@ -1,95 +1,119 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Search, Phone } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Menu, X, ArrowRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const navLinks = [
-  { href: "/search", label: "Properties" },
-  { href: "/compare", label: "Compare" },
-  { href: "/calculators", label: "Calculators" },
-  { href: "/neighborhoods", label: "Neighborhoods" },
-  { href: "/invest", label: "E2 Visa" },
-  { href: "/about", label: "About" },
+  { label: "Properties", href: "/search" },
+  { label: "Neighborhoods", href: "/neighborhoods" },
+  { label: "Calculators", href: "/calculators" },
+  { label: "E-2 Visa", href: "/e2-visa" },
+  { label: "About", href: "/about" },
 ];
 
 export function Header() {
-  const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Logo — Revolut-style bold wordmark */}
-        <Link href="/" className="flex items-center gap-2">
-          <span className="text-2xl font-serif font-bold tracking-tight text-gold-gradient">
-            YULMIA
-          </span>
-        </Link>
-
-        {/* Desktop Nav — Revolut 20px weight 500 style */}
-        <nav className="hidden md:flex items-center gap-1">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground rounded-full hover:bg-muted tracking-wide"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
-
-        {/* Desktop Actions — Revolut pill buttons */}
-        <div className="hidden md:flex items-center gap-3">
-          <Link href="/search">
-            <Button variant="ghost" size="icon">
-              <Search className="h-4 w-4" />
-            </Button>
+    <header className="fixed top-0 left-0 right-0 z-50">
+      <div className="mx-auto max-w-[1400px] px-6 lg:px-10">
+        <nav className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-2 group">
+            <span className="text-xl font-light tracking-[-0.06em] text-foreground">
+              YULMIA
+            </span>
+            <span className="hidden sm:inline text-[10px] font-medium tracking-[0.15em] uppercase text-gold mt-1">
+              Investments
+            </span>
           </Link>
-          <a href="tel:+13057868001">
-            <Button variant="outline" size="sm" className="font-medium tracking-wide">
-              <Phone className="mr-2 h-4 w-4" />
-              (305) 786-8001
-            </Button>
-          </a>
-          <Button size="sm" className="font-semibold tracking-wide">
-            Book Consultation
-          </Button>
-        </div>
 
-        {/* Mobile Menu */}
-        <Sheet open={open} onOpenChange={setOpen}>
-          <SheetTrigger className="md:hidden inline-flex items-center justify-center rounded-full hover:bg-muted hover:text-foreground size-9">
-            <Menu className="h-5 w-5" />
-          </SheetTrigger>
-          <SheetContent side="right" className="w-[300px] bg-background border-border">
-            <div className="flex flex-col gap-6 mt-8">
+          {/* Desktop Nav */}
+          <div className="hidden md:flex items-center gap-1">
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href || pathname.startsWith(link.href + "/");
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`px-3 py-1.5 text-[13px] tracking-[0.02em] transition-colors rounded-sm ${
+                    isActive
+                      ? "text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
+          </div>
+
+          {/* CTA */}
+          <div className="hidden md:flex items-center gap-4">
+            <Link
+              href="/invest"
+              className="text-[13px] tracking-[0.02em] text-muted-foreground hover:text-foreground transition-colors gold-underline"
+            >
+              Private Access
+            </Link>
+            <Link
+              href="/search"
+              className="inline-flex items-center gap-1.5 h-9 px-5 bg-foreground text-background text-[13px] font-medium tracking-[0.01em] rounded-sm hover:bg-foreground/90 transition-colors"
+            >
+              Browse
+              <ArrowRight className="h-3 w-3" />
+            </Link>
+          </div>
+
+          {/* Mobile toggle */}
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="md:hidden w-9 h-9 flex items-center justify-center text-foreground"
+          >
+            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </nav>
+      </div>
+
+      {/* Mobile Menu */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.15 }}
+            className="md:hidden fixed inset-x-0 top-16 bg-background/95 backdrop-blur-md border-b border-border"
+          >
+            <div className="px-6 py-6 space-y-1">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  onClick={() => setOpen(false)}
-                  className="text-lg font-medium text-foreground hover:text-primary transition-colors tracking-wide"
+                  onClick={() => setMobileOpen(false)}
+                  className="block py-2.5 text-[15px] text-muted-foreground hover:text-foreground transition-colors"
                 >
                   {link.label}
                 </Link>
               ))}
-              <div className="h-px bg-border" />
-              <a href="tel:+13057868001">
-                <Button variant="outline" className="w-full font-medium tracking-wide">
-                  <Phone className="mr-2 h-4 w-4" />
-                  Call Us
-                </Button>
-              </a>
-              <Button className="w-full font-semibold tracking-wide">
-                Book Consultation
-              </Button>
+              <div className="pt-4 border-t border-border mt-4">
+                <Link
+                  href="/search"
+                  onClick={() => setMobileOpen(false)}
+                  className="inline-flex items-center gap-1.5 h-10 px-6 bg-foreground text-background text-sm font-medium rounded-sm"
+                >
+                  Browse Properties
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
             </div>
-          </SheetContent>
-        </Sheet>
-      </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }
