@@ -8,6 +8,8 @@ import { Menu, Search, Phone } from "lucide-react";
 
 const navLinks = [
   { href: "/search", label: "Properties" },
+  { href: "/compare", label: "Compare" },
+  { href: "/calculators", label: "Calculators" },
   { href: "/neighborhoods", label: "Neighborhoods" },
   { href: "/invest", label: "E2 Visa" },
   { href: "/about", label: "About" },
@@ -59,10 +61,8 @@ export function Header() {
 
         {/* Mobile Menu */}
         <Sheet open={open} onOpenChange={setOpen}>
-          <SheetTrigger className="md:hidden">
-            <Button variant="ghost" size="icon">
-              <Menu className="h-5 w-5" />
-            </Button>
+          <SheetTrigger className="md:hidden inline-flex items-center justify-center rounded-lg hover:bg-muted hover:text-foreground dark:hover:bg-muted/50 size-8">
+            <Menu className="h-5 w-5" />
           </SheetTrigger>
           <SheetContent side="right" className="w-[300px] bg-background border-border">
             <div className="flex flex-col gap-6 mt-8">
