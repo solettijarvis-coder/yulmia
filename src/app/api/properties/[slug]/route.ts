@@ -8,22 +8,23 @@ let propertiesCache: any[] | null = null;
 function getProperties(): any[] {
   if (propertiesCache) return propertiesCache;
 
-  try {
-    const dataPath = join(process.cwd(), "..", "data", "properties.json");
-    const raw = readFileSync(dataPath, "utf-8");
-    propertiesCache = JSON.parse(raw);
-    return propertiesCache!;
-  } catch {
-    // Try alternate path
+  // Try multiple paths for different environments
+  const paths = [
+    join(process.cwd(), "data", "properties.json"),       // Vercel: data/ in project root
+    join(process.cwd(), "..", "data", "properties.json"), // Local dev: ../data/
+  ];
+
+  for (const dataPath of paths) {
     try {
-      const altPath = join(process.cwd(), "data", "properties.json");
-      const raw = readFileSync(altPath, "utf-8");
+      const raw = readFileSync(dataPath, "utf-8");
       propertiesCache = JSON.parse(raw);
       return propertiesCache!;
     } catch {
-      return [];
+      continue;
     }
   }
+
+  return [];
 }
 
 export async function GET(
