@@ -6,9 +6,9 @@ interface MarketStatsData {
   medianPrice: number;
   avgRent: number;
   strongCount: number;
-  moderateCount: number;
   e2Count: number;
-  cities: string[];
+  onePercentRuleCount?: number;
+  avgCashFlow?: number;
 }
 
 interface NeighborhoodData {
@@ -97,7 +97,7 @@ export async function MarketStats() {
             South Florida Market Data
           </h2>
           <p className="mt-3 text-muted-foreground">
-            Real investment metrics from {stats.totalProperties.toLocaleString()} properties across {stats.cities.length} cities
+            Real investment metrics from {stats.totalProperties.toLocaleString()} properties across South Florida
           </p>
         </div>
 
