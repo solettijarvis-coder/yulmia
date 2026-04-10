@@ -11,24 +11,8 @@ interface PropertyDetailsGroup {
   lotSize: number | null;
   yearBuilt: number | null;
   propertyType: string;
-  garage: string;
-  stories: number;
-}
-
-interface UtilityGroup {
-  cooling: string;
-  heating: string;
-  sewer: string;
-  water: string;
-  parking: string;
-}
-
-interface OutdoorGroup {
-  pool: string;
-  patio: string;
-  fence: string;
-  sprinkler: string;
-  lawn: string;
+  newConstruction?: boolean;
+  hoaFee?: number;
 }
 
 interface InvestmentGroup {
@@ -44,8 +28,6 @@ interface InvestmentGroup {
 
 interface PropertyFeaturesProps {
   propertyDetails: PropertyDetailsGroup;
-  utility: UtilityGroup;
-  outdoor: OutdoorGroup;
   investment: InvestmentGroup;
 }
 
@@ -73,8 +55,6 @@ function FeatureGroup({
 
 export function PropertyFeatures({
   propertyDetails,
-  utility,
-  outdoor,
   investment,
 }: PropertyFeaturesProps) {
   const pd = propertyDetails;
@@ -85,24 +65,8 @@ export function PropertyFeatures({
     { label: "Lot Size", value: pd.lotSize ? `${pd.lotSize.toLocaleString()} sqft` : "N/A" },
     { label: "Year Built", value: pd.yearBuilt ? String(pd.yearBuilt) : "N/A" },
     { label: "Type", value: pd.propertyType },
-    { label: "Garage", value: pd.garage || "N/A" },
-    { label: "Stories", value: String(pd.stories) },
-  ];
-
-  const utilityItems = [
-    { label: "Cooling", value: utility.cooling || "N/A" },
-    { label: "Heating", value: utility.heating || "N/A" },
-    { label: "Sewer", value: utility.sewer || "N/A" },
-    { label: "Water", value: utility.water || "N/A" },
-    { label: "Parking", value: utility.parking || "N/A" },
-  ];
-
-  const outdoorItems = [
-    { label: "Pool", value: outdoor.pool || "N/A" },
-    { label: "Patio", value: outdoor.patio || "N/A" },
-    { label: "Fence", value: outdoor.fence || "N/A" },
-    { label: "Sprinkler", value: outdoor.sprinkler || "N/A" },
-    { label: "Lawn", value: outdoor.lawn || "N/A" },
+    { label: "New Construction", value: pd.newConstruction ? "Yes" : "No" },
+    { label: "HOA Fee", value: pd.hoaFee && pd.hoaFee > 0 ? `$${pd.hoaFee}/mo` : "None" },
   ];
 
   const verdictLabel =
@@ -129,10 +93,8 @@ export function PropertyFeatures({
         <CardTitle className="text-xl font-serif">Property Features</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
           <FeatureGroup title="Property Details" items={detailItems} />
-          <FeatureGroup title="Utility" items={utilityItems} />
-          <FeatureGroup title="Outdoor" items={outdoorItems} />
           <FeatureGroup title="Investment Details" items={investmentItems} />
         </div>
       </CardContent>

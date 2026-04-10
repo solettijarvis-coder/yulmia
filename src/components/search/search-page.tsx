@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { Search, SlidersHorizontal, MapPin, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, SlidersHorizontal, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { propertyTypeLabels, formatPrice, formatPercent } from "@/lib/utils";
+import { propertyTypeLabels } from "@/lib/utils";
 import type { PropertyType, InvestmentVerdict } from "@/types/property";
+import { PropertyCard } from "./property-card";
 
 interface SearchProperty {
   id: string;
@@ -29,13 +30,8 @@ interface SearchProperty {
   daysOnMarket: number;
   yearBuilt: number | null;
   hoaFee: number;
+  photos: string[];
 }
-
-const verdictConfig = {
-  STRONG: { label: "Strong", className: "bg-success/10 text-success border-success/20" },
-  MODERATE: { label: "Moderate", className: "bg-warning/10 text-warning border-warning/20" },
-  CAUTIOUS: { label: "Cautious", className: "bg-destructive/10 text-destructive border-destructive/20" },
-};
 
 const PAGE_SIZE = 24;
 
@@ -68,7 +64,11 @@ export function SearchPage() {
   useEffect(() => {
     fetch("/data/search.json")
       .then((r) => r.json())
-      .then((data: SearchProperty[]) => {
+      .then((raw: Omit<SearchProperty, "photos">[]) => {
+        const data: SearchProperty[] = raw.map((p) => ({
+          ...p,
+          photos: p.photo ? [p.photo] : [],
+        }));
         setAllProperties(data);
         setLoading(false);
       })
@@ -399,86 +399,31 @@ export function SearchPage() {
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {paginated.map((property) => {
-                const verdict = verdictConfig[property.verdict];
-                const grossYield = ((property.rent * 12) / property.price * 100).toFixed(1);
-                return (
-                  <a
-                    key={property.id}
-                    href={`/property/${property.slug}`}
-                    className="group block"
-                  >
-                    <div className="rounded-xl border border-border bg-card overflow-hidden transition-all duration-300 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5">
-                      {/* Image */}
-                      <div className="relative aspect-[4/3] overflow-hidden">
-                        <div
-                          className="absolute inset-0 bg-cover bg-center bg-gray-800 transition-transform duration-500 group-hover:scale-105"
-                          style={property.photo ? { backgroundImage: `url(${property.photo})` } : undefined}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                        <div className="absolute top-3 left-3">
-                          <Badge className={`${verdict.className} border text-xs font-semibold`}>
-                            {verdict.label}
-                          </Badge>
-                        </div>
-                        {property.e2Eligible && (
-                          <div className="absolute top-3 right-3">
-                            <Badge className="bg-primary/20 text-primary border-primary/30 border text-[10px] font-semibold">
-                              E-2
-                            </Badge>
-                          </div>
-                        )}
-                        <div className="absolute bottom-3 left-3">
-                          <span className="text-xl font-serif font-bold text-white">
-                            {formatPrice(property.price)}
-                          </span>
-                        </div>
-                        <div className="absolute bottom-3 right-3">
-                          <Badge variant="secondary" className="text-xs bg-black/50 text-white border-0">
-                            {property.daysOnMarket}d on market
-                          </Badge>
-                        </div>
-                      </div>
-
-                      {/* Content */}
-                      <div className="p-4">
-                        <div className="flex items-start gap-2">
-                          <MapPin className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                          <div>
-                            <p className="font-medium text-foreground text-sm">{property.address}</p>
-                            <p className="text-xs text-muted-foreground">
-                              {property.city}, FL {property.zip}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="mt-2 flex items-center gap-3 text-sm text-muted-foreground">
-                          <span>{property.beds} bd</span>
-                          <span className="text-border">|</span>
-                          <span>{property.baths} ba</span>
-                          <span className="text-border">|</span>
-                          <span>{property.sqft.toLocaleString()} sqft</span>
-                        </div>
-
-                        <div className="mt-3 pt-3 border-t border-border grid grid-cols-3 gap-2">
-                          <div className="text-center">
-                            <p className="text-sm font-bold text-primary">{formatPercent(property.capRate)}</p>
-                            <p className="text-[10px] text-muted-foreground">Cap Rate</p>
-                          </div>
-                          <div className="text-center">
-                            <p className="text-sm font-bold text-primary">{formatPrice(property.rent)}</p>
-                            <p className="text-[10px] text-muted-foreground">Est. Rent</p>
-                          </div>
-                          <div className="text-center">
-                            <p className="text-sm font-bold text-primary">{formatPercent(parseFloat(grossYield))}</p>
-                            <p className="text-[10px] text-muted-foreground">Gross Yield</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </a>
-                );
-              })}
+              {paginated.map((property) => (
+                <PropertyCard
+                  key={property.id}
+                  id={property.id}
+                  slug={property.slug}
+                  address={property.address}
+                  city={property.city}
+                  zip={property.zip}
+                  price={property.price}
+                  beds={property.beds}
+                  baths={property.baths}
+                  sqft={property.sqft}
+                  propertyType={property.propertyType}
+                  photos={property.photos}
+                  capRate={property.capRate}
+                  cashFlow={property.cashFlow}
+                  cocReturn={property.cocReturn}
+                  rent={property.rent}
+                  verdict={property.verdict}
+                  e2Eligible={property.e2Eligible}
+                  daysOnMarket={property.daysOnMarket}
+                  yearBuilt={property.yearBuilt}
+                  hoaFee={property.hoaFee}
+                />
+              ))}
             </div>
 
             {/* Pagination */}

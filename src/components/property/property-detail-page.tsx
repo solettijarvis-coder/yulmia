@@ -30,10 +30,9 @@ import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/utils";
 import type { InvestmentVerdict } from "@/types/property";
 import { ImageGallery } from "@/components/property/image-gallery";
-import { WalkScores } from "@/components/property/walk-scores";
-import { NearbyPlaces } from "@/components/property/nearby-places";
 import { PropertyFeatures } from "@/components/property/property-features";
-import { getMockWalkScores, getMockNearbyPlaces } from "@/lib/mock-data";
+import { PropertyMap } from "@/components/property/property-map";
+import { QuickStatsBar } from "@/components/property/quick-stats-bar";
 
 interface PropertyData {
   source_id: string;
@@ -258,22 +257,16 @@ export function PropertyDetailPage({ slug }: { slug: Promise<{ slug: string }> }
               )}
             </div>
 
-            {/* Quick Stats */}
-            <div className="flex flex-wrap items-center gap-4 text-sm">
-              <span className="flex items-center gap-1.5"><Bed className="h-4 w-4 text-primary" /> {p.beds} Beds</span>
-              <span className="text-border">|</span>
-              <span className="flex items-center gap-1.5"><Bath className="h-4 w-4 text-primary" /> {p.baths}{p.half_baths > 0 ? ` + ${p.half_baths} half` : ""} Baths</span>
-              <span className="text-border">|</span>
-              <span className="flex items-center gap-1.5"><Square className="h-4 w-4 text-primary" /> {p.sqft.toLocaleString()} sqft</span>
-              <span className="text-border">|</span>
-              <span className="flex items-center gap-1.5"><Clock className="h-4 w-4 text-primary" /> {p.days_on_market} days on market</span>
-              {p.year_built && (
-                <>
-                  <span className="text-border">|</span>
-                  <span className="flex items-center gap-1.5"><CalendarDays className="h-4 w-4 text-primary" /> Built {p.year_built}</span>
-                </>
-              )}
-            </div>
+            {/* Quick Stats Bar */}
+            <QuickStatsBar
+              beds={p.beds}
+              baths={p.baths}
+              halfBaths={p.half_baths}
+              sqft={p.sqft}
+              yearBuilt={p.year_built}
+              daysOnMarket={p.days_on_market}
+              propertyType={typeLabel}
+            />
 
             <Separator />
 
@@ -286,6 +279,16 @@ export function PropertyDetailPage({ slug }: { slug: Promise<{ slug: string }> }
                 <p className="text-muted-foreground leading-relaxed">{p.description}</p>
               </div>
             )}
+
+            <Separator />
+
+            {/* Location Map */}
+            <PropertyMap
+              address={p.address}
+              city={p.city}
+              state={p.state}
+              zip={p.zip}
+            />
 
             <Separator />
 
@@ -491,12 +494,6 @@ export function PropertyDetailPage({ slug }: { slug: Promise<{ slug: string }> }
 
             {/* Investor Contact Form - compact */}
             <InvestorContactForm compact />
-
-            {/* Walk Scores */}
-            <WalkScores scores={getMockWalkScores(p.slug)} />
-
-            {/* Nearby Places */}
-            <NearbyPlaces places={getMockNearbyPlaces(p.slug)} />
           </div>
         </div>
 
@@ -510,22 +507,8 @@ export function PropertyDetailPage({ slug }: { slug: Promise<{ slug: string }> }
             lotSize: p.lot_size,
             yearBuilt: p.year_built,
             propertyType: typeLabel,
-            garage: p.hoa_fee > 0 ? "Attached" : "N/A",
-            stories: 1,
-          }}
-          utility={{
-            cooling: "Central A/C",
-            heating: "Central",
-            sewer: "Public",
-            water: "Public",
-            parking: p.hoa_fee > 0 ? "2 Spaces" : "Driveway",
-          }}
-          outdoor={{
-            pool: "Community",
-            patio: "Yes",
-            fence: "Yes",
-            sprinkler: "Auto",
-            lawn: "Maintained",
+            newConstruction: p.new_construction,
+            hoaFee: p.hoa_fee,
           }}
           investment={{
             capRate: f.cap_rate,
