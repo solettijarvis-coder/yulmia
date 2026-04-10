@@ -64,7 +64,7 @@ export function Hero() {
       {/* Content */}
       <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center">
         {/* Revolut-style pill badge */}
-        <div className="inline-flex items-center gap-2 rounded-[--radius-pill] border border-primary/30 bg-primary/5 px-5 py-2 text-sm text-primary mb-8 tracking-wide">
+        <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-5 py-2 text-sm text-primary mb-8 tracking-wide">
           <MapPin className="h-3.5 w-3.5" />
           Montreal to Miami — Investment Properties for Canadians
         </div>
@@ -104,7 +104,7 @@ export function Hero() {
 
         {/* Integrated Search Bar — flat Revolut card */}
         <div className="mt-12 max-w-3xl mx-auto">
-          <div className="rounded-[--radius-xl] border border-border bg-card/95 backdrop-blur-sm p-5 sm:p-6">
+          <div className="rounded-2xl border border-border bg-card/95 backdrop-blur-sm p-5 sm:p-6">
             {/* Main search row */}
             <div className="flex items-center gap-2">
               <div className="relative flex-1">
@@ -115,7 +115,7 @@ export function Hero() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                  className="w-full h-12 rounded-[--radius-md] border border-border bg-background pl-12 pr-4 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-sm tracking-wide"
+                  className="w-full h-12 rounded-lg border border-border bg-background pl-12 pr-4 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-sm tracking-wide"
                 />
               </div>
               <Button
@@ -139,7 +139,7 @@ export function Hero() {
                   <select
                     value={value}
                     onChange={(e) => setter(e.target.value)}
-                    className="w-full h-10 rounded-[--radius-md] border border-border bg-background px-3 pr-8 text-sm text-foreground appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary tracking-wide"
+                    className="w-full h-10 rounded-lg border border-border bg-background px-3 pr-8 text-sm text-foreground appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary tracking-wide"
                   >
                     {options.map((opt) => (
                       <option key={opt.value} value={opt.value}>
@@ -163,7 +163,7 @@ export function Hero() {
                   setSearchQuery(term);
                   router.push(`/search?q=${encodeURIComponent(term)}`);
                 }}
-                className="px-3 py-1.5 rounded-[--radius-pill] border border-border hover:border-primary/50 hover:text-primary transition-colors tracking-wide"
+                className="px-3 py-1.5 rounded-full border border-border hover:border-primary/50 hover:text-primary transition-colors tracking-wide"
               >
                 {term}
               </button>
@@ -193,7 +193,7 @@ export function Hero() {
         {/* Trust badges — Revolut pill chips */}
         <div className="mt-10 flex items-center justify-center gap-4 text-xs text-muted-foreground">
           {["No Condos", "Investor Data", "E2 Visa Guidance"].map((badge) => (
-            <span key={badge} className="flex items-center gap-1.5 px-3 py-1.5 rounded-[--radius-pill] border border-border tracking-wide">
+            <span key={badge} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border tracking-wide">
               <ShieldCheck className="h-3.5 w-3.5 text-primary" />
               {badge}
             </span>

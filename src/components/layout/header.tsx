@@ -34,7 +34,7 @@ export function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground rounded-[--radius-pill] hover:bg-muted tracking-wide"
+              className="px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground rounded-full hover:bg-muted tracking-wide"
             >
               {link.label}
             </Link>
@@ -61,7 +61,7 @@ export function Header() {
 
         {/* Mobile Menu */}
         <Sheet open={open} onOpenChange={setOpen}>
-          <SheetTrigger className="md:hidden inline-flex items-center justify-center rounded-[--radius-pill] hover:bg-muted hover:text-foreground size-9">
+          <SheetTrigger className="md:hidden inline-flex items-center justify-center rounded-full hover:bg-muted hover:text-foreground size-9">
             <Menu className="h-5 w-5" />
           </SheetTrigger>
           <SheetContent side="right" className="w-[300px] bg-background border-border">

@@ -92,7 +92,7 @@ export function PropertyCard({
       onMouseEnter={startCarousel}
       onMouseLeave={stopCarousel}
     >
-      <div className="rounded-[--radius-xl] border border-border bg-card overflow-hidden transition-all duration-300 hover:border-primary/40">
+      <div className="rounded-2xl border border-border bg-card overflow-hidden transition-all duration-300 hover:border-primary/40">
         {/* Image with Carousel */}
         <div className="relative aspect-[4/3] overflow-hidden">
           {hasPhotos ? (
