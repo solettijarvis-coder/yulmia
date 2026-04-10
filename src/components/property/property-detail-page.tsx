@@ -29,6 +29,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/utils";
 import type { InvestmentVerdict } from "@/types/property";
+import { ImageGallery } from "@/components/property/image-gallery";
+import { WalkScores } from "@/components/property/walk-scores";
+import { NearbyPlaces } from "@/components/property/nearby-places";
+import { PropertyFeatures } from "@/components/property/property-features";
+import { getMockWalkScores, getMockNearbyPlaces } from "@/lib/mock-data";
 
 interface PropertyData {
   source_id: string;
@@ -206,24 +211,11 @@ export function PropertyDetailPage({ slug }: { slug: Promise<{ slug: string }> }
           {/* Left Column - Property Details */}
           <div className="lg:col-span-2 space-y-6">
             {/* Image Gallery */}
-            <div className="aspect-[16/9] rounded-xl overflow-hidden bg-card border border-border">
-              {p.photos && p.photos.length > 0 ? (
-                <div className="w-full h-full bg-cover bg-center bg-gray-800" style={{ backgroundImage: `url(${p.photos[0]})` }} />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gray-800 text-muted-foreground">
-                  <Building2 className="h-16 w-16" />
-                </div>
-              )}
-            </div>
-
-            {/* Additional photos row */}
-            {p.photos && p.photos.length > 1 && (
-              <div className="grid grid-cols-4 gap-2">
-                {p.photos.slice(1, 5).map((photo, i) => (
-                  <div key={i} className="aspect-[4/3] rounded-lg overflow-hidden border border-border bg-gray-800">
-                    <div className="w-full h-full bg-cover bg-center" style={{ backgroundImage: `url(${photo})` }} />
-                  </div>
-                ))}
+            {p.photos && p.photos.length > 0 ? (
+              <ImageGallery photos={p.photos} />
+            ) : (
+              <div className="aspect-[16/9] rounded-xl overflow-hidden bg-card border border-border flex items-center justify-center text-muted-foreground">
+                <Building2 className="h-16 w-16" />
               </div>
             )}
 
@@ -499,8 +491,53 @@ export function PropertyDetailPage({ slug }: { slug: Promise<{ slug: string }> }
 
             {/* Investor Contact Form - compact */}
             <InvestorContactForm compact />
+
+            {/* Walk Scores */}
+            <WalkScores scores={getMockWalkScores(p.slug)} />
+
+            {/* Nearby Places */}
+            <NearbyPlaces places={getMockNearbyPlaces(p.slug)} />
           </div>
         </div>
+
+        {/* Property Features - full width */}
+        <PropertyFeatures
+          propertyDetails={{
+            beds: p.beds,
+            baths: p.baths,
+            halfBaths: p.half_baths,
+            sqft: p.sqft,
+            lotSize: p.lot_size,
+            yearBuilt: p.year_built,
+            propertyType: typeLabel,
+            garage: p.hoa_fee > 0 ? "Attached" : "N/A",
+            stories: 1,
+          }}
+          utility={{
+            cooling: "Central A/C",
+            heating: "Central",
+            sewer: "Public",
+            water: "Public",
+            parking: p.hoa_fee > 0 ? "2 Spaces" : "Driveway",
+          }}
+          outdoor={{
+            pool: "Community",
+            patio: "Yes",
+            fence: "Yes",
+            sprinkler: "Auto",
+            lawn: "Maintained",
+          }}
+          investment={{
+            capRate: f.cap_rate,
+            estimatedRent: f.estimated_rent_monthly,
+            cashOnCashReturn: f.cash_on_cash_return,
+            monthlyCashFlow: f.monthly_cash_flow,
+            onePercentRule: f.one_percent_rule,
+            grm: f.gross_rent_multiplier,
+            e2Eligible: p.e2_eligible,
+            verdict: p.verdict,
+          }}
+        />
       </div>
     </div>
   );
